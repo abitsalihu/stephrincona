@@ -1,0 +1,29 @@
+{
+  "name": "stephrincona",
+  "version": "1.0.0",
+  "description": "",
+  "main": "vite.config.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abitsalihu/stephrincona.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abitsalihu/stephrincona/issues"
+  },
+  "homepage": "https://github.com/abitsalihu/stephrincona#readme",
+  "devDependencies": {
+    "gsap": "^3.12.5",
+    "lil-gui": "^0.19.2",
+    "postprocessing": "^6.36.2",
+    "stats.js": "^0.17.0",
+    "three": "^0.168.0",
+    "vite": "^5.4.7",
+    "vite-plugin-glsl": "^1.3.0"
+  }
+}
