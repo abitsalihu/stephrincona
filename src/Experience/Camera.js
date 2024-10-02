@@ -23,13 +23,13 @@ export default class Camera {
     }
 
     //? activate this when you want to find the position of the camera when you want to animate it
-    // document.addEventListener("click", () => {
-    //   console.log(
-    //     this.instance.position.x,
-    //     this.instance.position.y,
-    //     this.instance.position.z
-    //   );
-    // });
+    document.addEventListener("click", () => {
+      console.log(
+        this.instance.position.x,
+        this.instance.position.y,
+        this.instance.position.z
+      );
+    });
   }
 
   setInstance() {
@@ -43,7 +43,7 @@ export default class Camera {
     );
     this.instanceGroup.add(this.instance);
 
-    this.instance.position.set(0, 0, 2);
+    this.instance.position.set(0.25, 1, -0.95);
   }
 
   setControls() {

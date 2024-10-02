@@ -16,7 +16,7 @@ export default class HTML {
     this.bg.classList.add("bg");
     this.bgContent = `
     <div class="img-con">
-      <img src="/textures/logo.png" alt="logo">
+      <img src="/textures/logo1.png" alt="logo">
 
       </div>
       <svg
@@ -58,6 +58,47 @@ export default class HTML {
 
     this.body.append(this.navImage);
 
+    this.infoMainContainer = document.createElement("div");
+    this.infoMainContainer.classList.add("info-main-con");
+
+    this.infoMainContainer.innerHTML = `
+
+    <div class="info-inner-con credits">
+
+      <div class="dflex"> 
+        <h3>Credits</h3>
+        <div class="close-btn">Close</div>
+      </div>
+
+      <div class="dflex">
+        <p>
+          lorem ipsum 10 minus fours plus five mnius ten and then we saw that iw could be conquered but onot while it goes
+        </p>
+      </div>
+
+    </div>
+
+    <div class="info-inner-con info">
+
+      <div class="dflex"> 
+        <h3>Website Information</h3>
+        <div class="close-btn">Close</div>
+      </div>
+
+      <div class="dflex">
+        <p>
+          lorem ipsum 10 minus fours plus five mnius ten and then we saw that iw could be conquered but onot while it goes
+        </p>
+       
+      </div>
+
+    </div>
+
+    
+    `;
+
+    this.body.append(this.infoMainContainer);
+
     //! end HTML
 
     this.resources.on("resourcesReady", () => {
@@ -67,6 +108,7 @@ export default class HTML {
         y: 0,
         ease: "ease-out",
         display: "none",
+
         onComplete: () => {
           gsap.to(this.navImage, {
             duration: 0.5,
