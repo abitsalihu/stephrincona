@@ -1,10 +1,16 @@
 import * as THREE from "three";
 import Experience from "./Experience";
 import { Reflector } from "three/addons/objects/Reflector.js";
+import rayFragment from "/shaders/rayGod/rayFragment.glsl";
+import rayVertex from "/shaders/rayGod/rayVertex.glsl";
+
 import gsap from "gsap";
 
 export default class World {
   constructor() {
+    // console.log(rayFragment);
+    console.log(rayVertex);
+
     this.experience = new Experience();
 
     this.debug = this.experience.debug;
@@ -34,6 +40,7 @@ export default class World {
 
     //? raycaster
 
+    // this.screenActive = false;
     this.infoOpen = false;
 
     this.rayCaster = new THREE.Raycaster();
@@ -74,6 +81,18 @@ export default class World {
     };
 
     this.setUpScene();
+
+    this.rayGodMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        c: { value: 1 },
+        p: { value: 1.94 },
+        op: { value: 0.03 },
+        viewVector: { value: this.camera.position },
+        glowColor: { value: new THREE.Color("#fcfcdd") },
+      },
+      vertexShader: rayVertex,
+      fragmentShader: rayFragment,
+    });
   }
 
   setUpScene() {
@@ -142,13 +161,28 @@ export default class World {
         map: this.projectsTexture,
       });
 
+      this.dummyMaterial = new THREE.MeshBasicMaterial({ color: "black" });
+
       this.room.scene.traverse((child) => {
+        if (child.type === "Mesh") {
+          child.material = this.dummyMaterial;
+        }
         if (child.name === "screen") {
           child.material = this.screenMaterial;
-          console.log(child.position.x);
+          console.log(child.position);
+          this.intersectObjects.push(child);
+        }
+
+        if (child.name === "ray") {
+          child.material = this.fakeGodRays(child, this.camera);
+          // child.needsUpdate = true;
         }
 
         //? project texture
+
+        if (child.name.startsWith("laptop")) {
+          this.intersectObjects.push(child);
+        }
 
         if (child.name.startsWith("project")) {
           child.material = this.projectMaterial;
@@ -172,23 +206,23 @@ export default class World {
           child.material = this.screenMaterial;
           this.aboutBtn = child;
           console.log(child.scale.x);
-          this.intersectObjects.push(child);
+          // this.intersectObjects.push(child);
         }
         if (child.name === "btn_projects") {
           child.material = this.screenMaterial;
 
           this.projectsBtn = child;
-          this.intersectObjects.push(child);
+          // this.intersectObjects.push(child);
         }
         if (child.name === "btn_cv") {
           child.material = this.screenMaterial;
 
           this.cvBtn = child;
-          this.intersectObjects.push(child);
+          // this.intersectObjects.push(child);
         }
         if (child.name === "btn_credits") {
           this.creditsBtn = child;
-          this.intersectObjects.push(child);
+          // this.intersectObjects.push(child);
         }
 
         if (child.name.startsWith("project_btn")) {
@@ -225,17 +259,13 @@ export default class World {
           //   child.position.z
           // );
 
-          this.mirror.position.set(
-            -0.5254805088043213,
-            0.6485477685928345,
-            -1.0672026872634888
-          );
+          this.mirror.position.set(-0.457983, 0.648548, -1.0672);
 
           console.log(child.position.x, child.position.y, child.position.z);
 
-          this.debugActive();
-
           this.mirror.rotation.x = -0.22;
+
+          // console.log(this.rayGodMaterial.uniforms.c.value);
         }
       });
 
@@ -327,21 +357,51 @@ export default class World {
 
   monitorAmination() {
     gsap.to(this.controls.target, {
-      x: 0.25,
-      y: 0.91,
-      z: -1.16,
+      x: 0.375967,
+      y: 0.913637,
+      z: -1.16198,
 
-      duration: 3.5,
+      duration: 3,
       ease: "ease-in",
     });
 
     gsap.to(this.camera.position, {
-      x: 0.252,
-      y: 0.958,
-      z: -0.981,
-      duration: 3.5,
+      x: 0.373,
+      y: 0.957,
+      z: -0.964,
+      duration: 3,
       ease: "ease-in",
     });
+
+    // 0.3731984354231753 0.9571724976704357 -0.9643671442811123
+  }
+
+  fakeGodRays(objectToBeChanged, camera) {
+    let changedMaterial = new THREE.MeshBasicMaterial({
+      side: THREE.FrontSide,
+      blending: THREE.AdditiveBlending,
+      transparent: true,
+      depthWrite: false,
+    });
+
+    changedMaterial.onBeforeCompile = function (shader) {
+      shader.uniforms.c = { type: "f", value: 1 };
+      shader.uniforms.p = { type: "f", value: 1.94 };
+      shader.uniforms.glowColor = {
+        type: "c",
+        value: new THREE.Color("#fcfcdd"),
+      };
+      shader.uniforms.viewVector = { type: "v3", value: camera.position };
+      shader.uniforms.op = { type: "f", value: 0.03 };
+      shader.vertexShader = rayVertex;
+      shader.fragmentShader = rayFragment;
+      changedMaterial.userData.shader = shader;
+    };
+
+    console.log(changedMaterial);
+
+    objectToBeChanged.material = changedMaterial;
+    objectToBeChanged.needsUpdate = true;
   }
 
   projectorAnimation() {
@@ -396,6 +456,25 @@ export default class World {
         this.currentIntersect = this.intersects[0];
 
         //? what happens when certain object is clicked
+        console.log(this.currentIntersect.object.name);
+
+        if (
+          this.currentIntersect.object.name === "screen" ||
+          this.currentIntersect.object.name === "laptop001"
+        ) {
+          console.log(this.currentIntersect.object.name);
+          if (this.clicked) {
+            this.monitorAmination();
+
+            this.intersectObjects = [];
+            this.intersectObjects.push(
+              this.aboutBtn,
+              this.creditsBtn,
+              this.projectsBtn,
+              this.cvBtn
+            );
+          }
+        }
 
         if (!this.infoOpen) {
           document.body.style.cursor = "pointer";
