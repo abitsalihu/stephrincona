@@ -225,11 +225,11 @@ export default class World {
           //   child.position.z
           // );
 
-          // this.mirror.position.set(
-          //   -0.5254805088043213,
-          //   0.6485477685928345,
-          //   -1.0672026872634888
-          // );
+          this.mirror.position.set(
+            -0.5254805088043213,
+            0.6485477685928345,
+            -1.0672026872634888
+          );
 
           console.log(child.position.x, child.position.y, child.position.z);
 
@@ -263,18 +263,18 @@ export default class World {
       // this.controls.target.set(1.8344, 1.5365, 0.41755);
       // this.camera.position.set(0.856, 1.54, 0.4106);
 
-      this.controls.target.set(0.25219, 0.913636, -1.16198);
-      this.camera.position.set(
-        0.2527391698472012,
-        0.9582415233999753,
-        -0.9810956584553856
-      );
-
+      // this.controls.target.set(0.25219, 0.913636, -1.16198);
       // this.camera.position.set(
-      //   -2.672396368986411,
-      //   1.5513777436793132,
-      //   2.3745987383675415
+      //   0.2527391698472012,
+      //   0.9582415233999753,
+      //   -0.9810956584553856
       // );
+
+      this.camera.position.set(
+        -2.672396368986411,
+        1.5513777436793132,
+        2.3745987383675415
+      );
 
       // -2.672396368986411 1.5513777436793132 2.3745987383675415
 
