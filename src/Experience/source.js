@@ -20,6 +20,40 @@ export default [
 
   //? TEXTURES
 
+  //? baked textures
+
+  {
+    name: "firstBakedTexture",
+    type: "textureLoader",
+    path: "/textures/first_baked.webp",
+  },
+
+  {
+    name: "secondBakedTexture",
+    type: "textureLoader",
+    path: "/textures/second_baked.webp",
+  },
+
+  {
+    name: "wallsBakedTexture",
+    type: "textureLoader",
+    path: "/textures/walls_baked.webp",
+  },
+
+  {
+    name: "floorBaked",
+    type: "textureLoader",
+    path: "/textures/floor_baked.webp",
+  },
+
+  {
+    name: "magazinesTextures",
+    type: "textureLoader",
+    path: "/textures/magazine_textures.webp",
+  },
+
+  //? monitor textures
+
   {
     name: "homeTexture",
     type: "textureLoader",

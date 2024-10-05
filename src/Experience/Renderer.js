@@ -32,7 +32,7 @@ export default class Renderer {
 
     this.renderer.setSize(this.sizes.width, this.sizes.height);
     this.renderer.setPixelRatio(this.sizes.pixelRatio);
-    this.renderer.setClearColor("#f5f5f5");
+    this.renderer.setClearColor("#000000");
     // this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     // this.renderer.toneMapping = THREE.ReinhardToneMapping;
     // this.renderer.toneMapping = THREE.CineonToneMapping;

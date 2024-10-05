@@ -12,7 +12,7 @@ export default class Camera {
     this.scene = this.experience.scene;
     this.size = this.experience.size;
     this.fov = {
-      x: this.size.width > 678 ? 75 : 75,
+      x: this.size.width > 678 ? 45 : 45,
     };
 
     this.setInstance();
