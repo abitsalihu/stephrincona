@@ -58,6 +58,18 @@ export default class HTML {
 
     this.body.append(this.navImage);
 
+    //? info icon
+    this.infoIcon = document.createElement("div");
+
+    this.infoIcon.innerHTML = `
+      <img src="/textures/info-icon.png"/>
+     `;
+
+    this.infoIcon.classList.add("info-icon");
+
+    this.body.append(this.infoIcon);
+
+    //? info elements
     this.infoMainContainer = document.createElement("div");
     this.infoMainContainer.classList.add("info-main-con");
 
@@ -66,13 +78,34 @@ export default class HTML {
     <div class="info-inner-con credits">
 
       <div class="dflex"> 
-        <h3>Credits</h3>
-        <div class="close-btn">Close</div>
+        <h3></h3>
+        <div class="close-btn">
+          <svg class="icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.21794 9.45711C7.60846 9.06659 7.60846 8.43342 7.21794 8.0429L1.75 2.57496C1.5222 2.34716 1.5222 1.97781 1.75 1.75V1.75C1.97781 1.5222 2.34716 1.5222 2.57496 1.75L8.0429 7.21794C8.43342 7.60846 9.06659 7.60846 9.45711 7.21794L14.925 1.75C15.1529 1.5222 15.5222 1.5222 15.75 1.75V1.75C15.9778 1.97781 15.9778 2.34716 15.75 2.57496L10.2821 8.0429C9.89154 8.43342 9.89154 9.06659 10.2821 9.45711L15.75 14.925C15.9778 15.1529 15.9778 15.5222 15.75 15.75V15.75C15.5222 15.9778 15.1529 15.9778 14.925 15.75L9.45711 10.2821C9.06659 9.89154 8.43342 9.89154 8.0429 10.2821L2.57496 15.75C2.34716 15.9778 1.97781 15.9778 1.75 15.75V15.75C1.5222 15.5222 1.5222 15.1529 1.75 14.925L7.21794 9.45711Z" fill="white" stroke="white" stroke-width="1.5"/>
+          </svg>
+        </div>
       </div>
 
-      <div class="dflex">
+      <div class="rflex">
         <p>
-          lorem ipsum 10 minus fours plus five mnius ten and then we saw that iw could be conquered but onot while it goes
+Projects, 3D models & Web Design:
+ Stephany Rincón
+    </p>
+    <p>
+Photography Director:
+Sofía Montero
+ </p>
+    <p>
+Web 3D Developer: 
+Abit Salihu
+ </p>
+    <p>
+Biggest Supporters: 
+Mom and Dad :)
+ </p>
+    <p>
+Special Thanks:
+Venezuela <3
         </p>
       </div>
 
@@ -81,15 +114,34 @@ export default class HTML {
     <div class="info-inner-con info">
 
       <div class="dflex"> 
-        <h3>Website Information</h3>
-        <div class="close-btn">Close</div>
+        <h3></h3>
+         <div class="close-btn">
+          <svg class="icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.21794 9.45711C7.60846 9.06659 7.60846 8.43342 7.21794 8.0429L1.75 2.57496C1.5222 2.34716 1.5222 1.97781 1.75 1.75V1.75C1.97781 1.5222 2.34716 1.5222 2.57496 1.75L8.0429 7.21794C8.43342 7.60846 9.06659 7.60846 9.45711 7.21794L14.925 1.75C15.1529 1.5222 15.5222 1.5222 15.75 1.75V1.75C15.9778 1.97781 15.9778 2.34716 15.75 2.57496L10.2821 8.0429C9.89154 8.43342 9.89154 9.06659 10.2821 9.45711L15.75 14.925C15.9778 15.1529 15.9778 15.5222 15.75 15.75V15.75C15.5222 15.9778 15.1529 15.9778 14.925 15.75L9.45711 10.2821C9.06659 9.89154 8.43342 9.89154 8.0429 10.2821L2.57496 15.75C2.34716 15.9778 1.97781 15.9778 1.75 15.75V15.75C1.5222 15.5222 1.5222 15.1529 1.75 14.925L7.21794 9.45711Z" fill="black" stroke="white" stroke-width="1.5"/>
+          </svg>
+        </div>
       </div>
 
-      <div class="dflex">
+      <div class="rflex">
         <p>
-          lorem ipsum 10 minus fours plus five mnius ten and then we saw that iw could be conquered but onot while it goes
+          ¡Bienvenidos a mi portafolio!
         </p>
-       
+
+         <p>
+          Estoy muy emocionada de compartir contigo una selección de mis trabajos más representativos. Cada proyecto que verás aquí es el resultado de un proceso creativo que refleja mi pasión por el diseño y mi constante deseo de mejorar.
+        </p>
+
+         <p>
+    Esta página web interactiva es más que un simple portafolio; es una representación visual y conceptual de mi hogar, en especial de mi sala, que es el corazón de mi espacio creativo. Aquí es donde han nacido y evolucionado todos los proyectos que estás por descubrir. He cuidado hasta el más mínimo detalle para que esta experiencia te transporte a mi mundo, para que no solo veas mi trabajo, sino también entiendas el entorno donde ocurre la magia del diseño.
+        </p>
+
+         <p>
+    He querido hacer de esta página una puerta abierta a mi proceso creativo, donde puedas explorar, de manera interactiva, cómo y dónde surgen las ideas, desde el concepto inicial hasta la ejecución final. Es una invitación a adentrarte en mi vida creativa, a sentir de cerca el ambiente en el que vivo y trabajo, y a experimentar de primera mano "dónde nacen los proyectos".
+        </p>
+
+        <p>
+    Espero que disfrutes de esta experiencia interactiva tanto como yo disfruté creando cada uno de los proyectos que verás aquí. ¡Gracias por visitar mi espacio y bienvenido a mi mundo!
+        </p>
       </div>
 
     </div>
@@ -108,7 +160,7 @@ export default class HTML {
         y: 0,
         ease: "ease-out",
         display: "none",
-
+        // delay: 2,
         onComplete: () => {
           gsap.to(this.navImage, {
             duration: 0.5,

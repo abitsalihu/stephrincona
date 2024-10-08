@@ -40,23 +40,29 @@ export default class World {
     this.group = new THREE.Group();
 
     //? html
+    this.informationButton = this.html.infoIcon;
     this.infoMainContainer = this.html.infoMainContainer;
+
+    //? 3d buttons
     this.homeBtn = null;
     this.aboutBtn = null;
     this.projectsBtn = null;
     this.cvBtn = null;
     this.creditsBtn = null;
+    this.moreInforamtionBtn = null;
 
     //? projects btn
     this.projectBtns = [];
-
     this.projectorHomeBtn = null;
     this.projectorCreditsBtn = null;
 
     //? raycaster
 
     // this.screenActive = false;
-    this.infoOpen = false;
+    this.informationOpen = false;
+    this.creditsOpen = false;
+    this.projectOpen = false;
+    this.currentProject = 1;
 
     this.rayCaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
@@ -103,6 +109,7 @@ export default class World {
       this.environmentTexture = this.resources.items.environmentTexture;
       this.environmentTexture.SRGBColorSpace = THREE.SRGBColorSpace;
       this.scene.environment = this.environmentTexture;
+      // this.scene.background = this.environmentTexture;
 
       this.room = this.resources.items.room;
 
@@ -187,6 +194,28 @@ export default class World {
       this.project_5.colorSpace = THREE.SRGBColorSpace;
       this.project_5.flipY = false;
 
+      //? project_textures
+
+      this.project_1_projector = this.resources.items.project_1_projector;
+      this.project_1_projector.colorSpace = THREE.SRGBColorSpace;
+      this.project_1_projector.flipY = false;
+
+      this.project_2_projector = this.resources.items.project_2_projector;
+      this.project_2_projector.colorSpace = THREE.SRGBColorSpace;
+      this.project_2_projector.flipY = false;
+
+      this.project_3_projector = this.resources.items.project_3_projector;
+      this.project_3_projector.colorSpace = THREE.SRGBColorSpace;
+      this.project_3_projector.flipY = false;
+
+      this.project_4_projector = this.resources.items.project_4_projector;
+      this.project_4_projector.colorSpace = THREE.SRGBColorSpace;
+      this.project_4_projector.flipY = false;
+
+      this.project_5_projector = this.resources.items.project_5_projector;
+      this.project_5_projector.colorSpace = THREE.SRGBColorSpace;
+      this.project_5_projector.flipY = false;
+
       //?
 
       this.btnMaterial = new THREE.MeshBasicMaterial({
@@ -207,6 +236,8 @@ export default class World {
       });
 
       this.dummyMaterial = new THREE.MeshBasicMaterial({ color: "black" });
+
+      this.video = this.setUpLoadingScreen("/textures/video.mp4");
 
       this.room.scene.traverse((child) => {
         if (child.name.startsWith("first_baked")) {
@@ -254,7 +285,8 @@ export default class World {
         }
 
         if (child.name.startsWith("project")) {
-          child.material = this.projectMaterial;
+          // child.material = this.projectMaterial;
+          child.material = this.video;
           this.controls.target.set(
             child.position.x,
             child.position.y,
@@ -292,6 +324,10 @@ export default class World {
         if (child.name === "btn_credits") {
           this.creditsBtn = child;
           // this.intersectObjects.push(child);
+        }
+
+        if (child.name === "btn_more_information") {
+          this.moreInforamtionBtn = child;
         }
 
         if (child.name.startsWith("project_btn")) {
@@ -345,6 +381,7 @@ export default class World {
         }
       });
 
+      // ? website animation
       this.group.scale.set(0, 0, 0);
       gsap.to(this.group.scale, {
         x: 1,
@@ -374,12 +411,19 @@ export default class World {
       this.scene.add(this.group);
       // this.scene.add(this.mirror);
 
+      //? default camera position
       this.camera.position.set(-3.43, 1.73, 4.728);
-
-      // -3.5577492405018476 1.732372346263706 4.728274298904649
       this.controls.target.set(0.375967, 0.913637, -1.16198);
 
-      // -2.672396368986411 1.5513777436793132 2.3745987383675415
+      // //? monitor try
+      // this.camera.position.set(0.1874, 0.9914, -0.931);
+      // this.controls.target.set(0.188, 0.913637, -1.306);
+
+      this.informationButton.addEventListener("click", () => {
+        this.infoMainContainer.style.display = "flex";
+        document.querySelector(".info").style.display = "flex";
+        this.informationOpen = true;
+      });
 
       this.infoMainContainer.addEventListener("click", (e) => {
         console.log(e.target.className);
@@ -387,7 +431,8 @@ export default class World {
           this.infoMainContainer.style.display = "none";
           document.querySelector(".credits").style.display = "none";
           document.querySelector(".info").style.display = "none";
-          this.infoOpen = false;
+          this.creditsOpen = false;
+          this.informationOpen = false;
         }
       });
 
@@ -401,7 +446,7 @@ export default class World {
     this.monitor.muted = true;
     this.monitor.controls = true;
     this.monitor.playsInline = true;
-    // this.monitor.autoplay = true;
+    this.monitor.autoplay = true;
     this.monitor.loop = true;
     this.monitor.currentTime = 1;
     this.monitor.allowsFullscreen = false;
@@ -565,212 +610,298 @@ export default class World {
   }
 
   update() {
-    if (this.debugSettings.objectActive) {
-      if (this.cube) {
-        this.cube.rotation.y += 0.01;
-        this.cube.rotation.z -= 0.01;
-        this.cube.rotation.x += 0.005;
-      }
-    }
-
     if (this.rayCaster) {
       this.rayCaster.setFromCamera(this.pointer, this.camera);
       this.intersects = this.rayCaster.intersectObjects(this.intersectObjects);
 
       if (this.intersects.length) {
-        if (!this.currentIntersect) {
-        }
-        this.currentIntersect = this.intersects[0];
-
-        if (
-          this.currentIntersect.object.name === "screen" ||
-          this.currentIntersect.object.name === "laptop"
-        ) {
-          console.log(this.currentIntersect.object.name);
-          if (this.clicked) {
-            gsap.to(this.fakeGlowMaterial.uniforms.opacity, {
-              value: 0.17,
-              duration: 1,
-              delay: 0.5,
-              ease: "ease-out",
-            });
-            this.monitorAmination();
-
-            this.intersectObjects = [];
-            this.intersectObjects.push(
-              this.aboutBtn,
-              this.creditsBtn,
-              this.projectsBtn,
-              this.cvBtn
-            );
+        if (!this.informationOpen) {
+          if (!this.currentIntersect) {
           }
-        }
 
-        if (!this.infoOpen) {
-          document.body.style.cursor = "pointer";
+          this.currentIntersect = this.intersects[0];
 
-          if (this.currentIntersect.object.scale.x < 0.062) {
-            gsap.to(this.currentIntersect.object.scale, {
-              x: 0.062,
-              y: 0.062,
-              z: 0.062,
-              duration: 1,
-              ease: "ease-out",
-            });
-          }
-        }
-        if (this.currentIntersect.object.name === "btn_about") {
-          if (this.clicked) {
-            if (!this.infoOpen) {
-              this.screenMaterial.map = this.aboutMeTexture;
-              this.aboutBtn.material = this.btnMaterial;
-              this.projectsBtn.material = this.btnMaterial;
-              this.cvBtn.material = this.btnMaterial;
-
-              this.intersectObjects = [];
-              this.intersectObjects.push(this.homeBtn, this.creditsBtn);
-              this.homeBtn.material = this.btnMaterial;
-
-              console.log(this.intersectObjects);
-            }
-          }
-        }
-
-        if (this.currentIntersect.object.name === "btn_home") {
-          document.body.style.cursor = "pointer";
-
-          if (this.clicked) {
-            this.screenMaterial.map = this.homeTexture;
-            this.aboutBtn.material = this.screenMaterial;
-            this.projectsBtn.material = this.screenMaterial;
-            this.cvBtn.material = this.screenMaterial;
-
-            this.intersectObjects = [];
-            this.intersectObjects.push(
-              this.creditsBtn,
-              this.aboutBtn,
-              this.projectsBtn,
-              this.cvBtn
-            );
-
-            this.projectBtns.forEach((e) => {
-              e.material = this.btnMaterial;
-            });
-
-            this.infoMainContainer.style.display = "none";
-            document.querySelector(".credits").style.display = "none";
-            document.querySelector(".info").style.display = "none";
-            this.infoOpen = false;
-          }
-        }
-
-        if (this.currentIntersect.object.name === "btn_projects") {
-          if (this.clicked) {
-            if (!this.infoOpen) {
-              this.screenMaterial.map = this.projectsTexture;
-              this.aboutBtn.material = this.btnMaterial;
-              this.projectsBtn.material = this.btnMaterial;
-              this.cvBtn.material = this.btnMaterial;
-
-              this.projectBtns.forEach((e) => {
-                e.material = this.projectBtnMaterial;
+          if (
+            this.currentIntersect.object.name === "screen" ||
+            this.currentIntersect.object.name === "laptop"
+          ) {
+            console.log(this.currentIntersect.object.name);
+            if (this.clicked) {
+              gsap.to(this.fakeGlowMaterial.uniforms.opacity, {
+                value: 0.17,
+                duration: 1,
+                delay: 0.5,
+                ease: "ease-out",
               });
+              this.monitorAmination();
 
-              this.homeBtn.material = this.btnMaterial;
-              this.creditsBtn.material = this.btnMaterial;
-
-              this.intersectObjects = this.projectBtns;
-              this.intersectObjects.push(this.homeBtn, this.creditsBtn);
-            }
-          }
-        }
-
-        if (this.currentIntersect.object.name === "btn_credits") {
-          if (this.clicked) {
-            this.infoMainContainer.style.display = "flex";
-            document.querySelector(".credits").style.display = "flex";
-            this.infoOpen = true;
-          }
-        }
-
-        if (this.currentIntersect.object.name === "btn_cv") {
-          if (this.clicked) {
-            if (!this.infoOpen) {
-              this.screenMaterial.map = this.cvTexture;
-              this.aboutBtn.material = this.btnMaterial;
-              this.projectsBtn.material = this.btnMaterial;
-              this.cvBtn.material = this.btnMaterial;
               this.intersectObjects = [];
-              this.intersectObjects.push(this.homeBtn, this.creditsBtn);
+              this.intersectObjects.push(
+                this.aboutBtn,
+                this.creditsBtn,
+                this.projectsBtn,
+                this.cvBtn
+              );
             }
           }
-        }
 
-        if (this.currentIntersect.object.name === "project_btn1") {
-          if (this.clicked) {
-            if (!this.infoOpen) {
-              this.projectMaterial.map = this.project_1;
+          if (!this.creditsOpen) {
+            document.body.style.cursor = "pointer";
+
+            if (this.currentIntersect.object.scale.x < 0.062) {
+              gsap.to(this.currentIntersect.object.scale, {
+                x: 0.062,
+                y: 0.062,
+                z: 0.062,
+                duration: 1,
+                ease: "ease-out",
+              });
+            }
+          }
+          if (this.currentIntersect.object.name === "btn_about") {
+            if (this.clicked) {
+              if (!this.creditsOpen) {
+                this.screenMaterial.map = this.aboutMeTexture;
+                this.aboutBtn.material = this.btnMaterial;
+                this.projectsBtn.material = this.btnMaterial;
+                this.cvBtn.material = this.btnMaterial;
+
+                this.intersectObjects = [];
+                this.intersectObjects.push(this.homeBtn, this.creditsBtn);
+                this.homeBtn.material = this.btnMaterial;
+
+                console.log(this.intersectObjects);
+              }
+            }
+          }
+
+          if (this.currentIntersect.object.name === "btn_home") {
+            document.body.style.cursor = "pointer";
+
+            if (this.clicked) {
+              if (this.projectOpen) {
+                this.screenMaterial.map = this.projectsTexture;
+                this.aboutBtn.material = this.btnMaterial;
+                this.projectsBtn.material = this.btnMaterial;
+                this.cvBtn.material = this.btnMaterial;
+
+                this.projectBtns.forEach((e) => {
+                  e.material = this.projectBtnMaterial;
+                });
+
+                this.homeBtn.material = this.btnMaterial;
+                this.creditsBtn.material = this.btnMaterial;
+
+                this.intersectObjects = this.projectBtns;
+                this.intersectObjects.push(this.homeBtn, this.creditsBtn);
+                this.creditsOpen = false;
+                this.projectOpen = false;
+              } else {
+                this.screenMaterial.map = this.homeTexture;
+                this.aboutBtn.material = this.screenMaterial;
+                this.projectsBtn.material = this.screenMaterial;
+                this.cvBtn.material = this.screenMaterial;
+
+                this.intersectObjects = [];
+                this.intersectObjects.push(
+                  this.creditsBtn,
+                  this.aboutBtn,
+                  this.projectsBtn,
+                  this.cvBtn
+                );
+
+                this.projectBtns.forEach((e) => {
+                  e.material = this.btnMaterial;
+                });
+
+                this.infoMainContainer.style.display = "none";
+                document.querySelector(".credits").style.display = "none";
+                document.querySelector(".info").style.display = "none";
+                this.creditsOpen = false;
+              }
+            }
+          }
+
+          if (this.currentIntersect.object.name === "btn_projects") {
+            if (this.clicked) {
+              if (!this.creditsOpen) {
+                this.screenMaterial.map = this.projectsTexture;
+                this.aboutBtn.material = this.btnMaterial;
+                this.projectsBtn.material = this.btnMaterial;
+                this.cvBtn.material = this.btnMaterial;
+
+                this.projectBtns.forEach((e) => {
+                  e.material = this.projectBtnMaterial;
+                });
+
+                this.homeBtn.material = this.btnMaterial;
+                this.creditsBtn.material = this.btnMaterial;
+
+                this.intersectObjects = this.projectBtns;
+                this.intersectObjects.push(this.homeBtn, this.creditsBtn);
+              }
+            }
+          }
+
+          if (this.currentIntersect.object.name === "btn_credits") {
+            if (this.clicked) {
+              this.infoMainContainer.style.display = "flex";
+              document.querySelector(".credits").style.display = "flex";
+              this.creditsOpen = true;
+            }
+          }
+
+          if (this.currentIntersect.object.name === "btn_cv") {
+            if (this.clicked) {
+              if (!this.creditsOpen) {
+                this.screenMaterial.map = this.cvTexture;
+                this.aboutBtn.material = this.btnMaterial;
+                this.projectsBtn.material = this.btnMaterial;
+                this.cvBtn.material = this.btnMaterial;
+                this.intersectObjects = [];
+                this.intersectObjects.push(this.homeBtn, this.creditsBtn);
+              }
+            }
+          }
+
+          if (this.currentIntersect.object.name === "project_btn1") {
+            if (this.clicked) {
+              if (!this.creditsOpen) {
+                this.screenMaterial.map = this.project_1;
+                this.intersectObjects = [];
+                this.intersectObjects.push(
+                  this.homeBtn,
+
+                  this.moreInforamtionBtn
+                );
+                this.projectBtns.forEach((e) => {
+                  e.material = this.btnMaterial;
+                });
+                this.projectOpen = true;
+                this.currentProject = 1;
+              }
+            }
+          }
+
+          if (this.currentIntersect.object.name === "project_btn2") {
+            if (this.clicked) {
+              if (!this.creditsOpen) {
+                this.screenMaterial.map = this.project_2;
+                this.intersectObjects = [];
+                this.intersectObjects.push(
+                  this.homeBtn,
+
+                  this.moreInforamtionBtn
+                );
+
+                this.projectBtns.forEach((e) => {
+                  e.material = this.btnMaterial;
+                });
+                this.projectOpen = true;
+                this.currentProject = 2;
+              }
+            }
+          }
+
+          if (this.currentIntersect.object.name === "project_btn3") {
+            if (this.clicked) {
+              if (!this.creditsOpen) {
+                this.screenMaterial.map = this.project_3;
+                this.intersectObjects = [];
+                this.intersectObjects.push(
+                  this.homeBtn,
+
+                  this.moreInforamtionBtn
+                );
+
+                this.projectBtns.forEach((e) => {
+                  e.material = this.btnMaterial;
+                });
+                this.projectOpen = true;
+                this.currentProject = 3;
+              }
+            }
+          }
+
+          if (this.currentIntersect.object.name === "project_btn4") {
+            if (this.clicked) {
+              if (!this.creditsOpen) {
+                this.screenMaterial.map = this.project_4;
+                this.intersectObjects = [];
+                this.intersectObjects.push(
+                  this.homeBtn,
+
+                  this.moreInforamtionBtn
+                );
+
+                this.projectBtns.forEach((e) => {
+                  e.material = this.btnMaterial;
+                });
+                this.projectOpen = true;
+                this.currentProject = 4;
+              }
+            }
+          }
+
+          if (this.currentIntersect.object.name === "project_btn5") {
+            if (this.clicked) {
+              if (!this.creditsOpen) {
+                this.screenMaterial.map = this.project_5;
+
+                this.intersectObjects = [];
+                this.intersectObjects.push(
+                  this.homeBtn,
+
+                  this.moreInforamtionBtn
+                );
+
+                this.projectBtns.forEach((e) => {
+                  e.material = this.btnMaterial;
+                });
+                this.projectOpen = true;
+                this.currentProject = 5;
+              }
+            }
+          }
+
+          if (this.currentIntersect.object.name === "btn_more_information") {
+            if (this.clicked) {
+              if (this.currentProject === 1) {
+                this.projectMaterial.map = this.project_1_projector;
+              } else if (this.currentProject === 2) {
+                this.projectMaterial.map = this.project_2_projector;
+              } else if (this.currentProject === 3) {
+                this.projectMaterial.map = this.project_3_projector;
+              } else if (this.currentProject === 4) {
+                this.projectMaterial.map = this.project_4_projector;
+              } else if (this.currentProject === 5) {
+                this.projectMaterial.map = this.project_5_projector;
+              }
 
               this.projectorAnimation();
             }
           }
-        }
 
-        if (this.currentIntersect.object.name === "project_btn2") {
-          if (this.clicked) {
-            if (!this.infoOpen) {
-              this.projectMaterial.map = this.project_2;
-              this.projectorAnimation();
+          //? projector buttons
+          if (this.currentIntersect.object.name === "btn_home_projector") {
+            document.body.style.cursor = "pointer";
+
+            if (this.clicked) {
+              this.monitorAmination();
+              this.infoMainContainer.style.display = "none";
+              document.querySelector(".credits").style.display = "none";
+              document.querySelector(".info").style.display = "none";
+              this.creditsOpen = false;
             }
           }
-        }
 
-        if (this.currentIntersect.object.name === "project_btn3") {
-          if (this.clicked) {
-            if (!this.infoOpen) {
-              this.projectMaterial.map = this.project_3;
-              this.projectorAnimation();
+          //? projector buttons
+          if (this.currentIntersect.object.name === "btn_credits_projector") {
+            if (this.clicked) {
+              this.infoMainContainer.style.display = "flex";
+              document.querySelector(".credits").style.display = "flex";
+              this.creditsOpen = true;
             }
-          }
-        }
-
-        if (this.currentIntersect.object.name === "project_btn4") {
-          if (this.clicked) {
-            if (!this.infoOpen) {
-              this.projectMaterial.map = this.project_4;
-              this.projectorAnimation();
-            }
-          }
-        }
-
-        if (this.currentIntersect.object.name === "project_btn5") {
-          if (this.clicked) {
-            if (!this.infoOpen) {
-              this.projectMaterial.map = this.project_5;
-              this.projectorAnimation();
-            }
-          }
-        }
-
-        //? projector buttons
-        if (this.currentIntersect.object.name === "btn_home_projector") {
-          document.body.style.cursor = "pointer";
-
-          if (this.clicked) {
-            this.monitorAmination();
-            this.infoMainContainer.style.display = "none";
-            document.querySelector(".credits").style.display = "none";
-            document.querySelector(".info").style.display = "none";
-            this.infoOpen = false;
-          }
-        }
-
-        //? projector buttons
-        if (this.currentIntersect.object.name === "btn_credits_projector") {
-          if (this.clicked) {
-            this.infoMainContainer.style.display = "flex";
-            document.querySelector(".credits").style.display = "flex";
-            this.infoOpen = true;
           }
         }
 
