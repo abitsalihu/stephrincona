@@ -62,7 +62,7 @@ export default class HTML {
     this.infoIcon = document.createElement("div");
 
     this.infoIcon.innerHTML = `
-      <img src="/textures/info-icon.png"/>
+      <img src="/textures/info-icon1.png"/>
      `;
 
     this.infoIcon.classList.add("info-icon");
@@ -86,38 +86,62 @@ export default class HTML {
         </div>
       </div>
 
-      <div class="rflex">
-        <p>
-Projects, 3D models & Web Design:
- Stephany Rincón
-    </p>
-    <p>
-Photography Director:
-Sofía Montero
- </p>
-    <p>
-Web 3D Developer: 
-Abit Salihu
- </p>
-    <p>
-Biggest Supporters: 
-Mom and Dad :)
- </p>
-    <p>
-Special Thanks:
-Venezuela <3
-        </p>
-      </div>
+      <div class="credits-con">
+        <div class="credits-p">
+          <p>
+            Projects, 3D models & Web Design:
+          </p>
+          <p class="credits-name">
+            Stephany Rincón
+          </p>
+        </div>
 
+        <div class="credits-p">
+          <p>
+           Photography Director:
+          </p>
+          <p class="credits-name">
+            Sofía Montero
+          </p>
+        </div>
+
+        <div class="credits-p">
+          <p>
+           Web 3D Developer:
+          </p>
+          <p class="credits-name">
+            Abit Salihu
+          </p>
+        </div>
+
+        <div class="credits-p">
+          <p>
+            Biggest Supporters:
+          </p>
+          <p class="credits-name">
+            Mom and Dad :)
+          </p>
+        </div>
+
+        <div class="credits-p">
+          <p>
+            Special Thanks:
+          </p>
+          <p class="credits-name">
+            Venezuela💛💙❤️
+          </p>
+        </div>
+
+      </div>
     </div>
 
     <div class="info-inner-con info">
 
       <div class="dflex"> 
         <h3></h3>
-         <div class="close-btn">
+        <div class="close-btn">
           <svg class="icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.21794 9.45711C7.60846 9.06659 7.60846 8.43342 7.21794 8.0429L1.75 2.57496C1.5222 2.34716 1.5222 1.97781 1.75 1.75V1.75C1.97781 1.5222 2.34716 1.5222 2.57496 1.75L8.0429 7.21794C8.43342 7.60846 9.06659 7.60846 9.45711 7.21794L14.925 1.75C15.1529 1.5222 15.5222 1.5222 15.75 1.75V1.75C15.9778 1.97781 15.9778 2.34716 15.75 2.57496L10.2821 8.0429C9.89154 8.43342 9.89154 9.06659 10.2821 9.45711L15.75 14.925C15.9778 15.1529 15.9778 15.5222 15.75 15.75V15.75C15.5222 15.9778 15.1529 15.9778 14.925 15.75L9.45711 10.2821C9.06659 9.89154 8.43342 9.89154 8.0429 10.2821L2.57496 15.75C2.34716 15.9778 1.97781 15.9778 1.75 15.75V15.75C1.5222 15.5222 1.5222 15.1529 1.75 14.925L7.21794 9.45711Z" fill="black" stroke="white" stroke-width="1.5"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.21794 9.45711C7.60846 9.06659 7.60846 8.43342 7.21794 8.0429L1.75 2.57496C1.5222 2.34716 1.5222 1.97781 1.75 1.75V1.75C1.97781 1.5222 2.34716 1.5222 2.57496 1.75L8.0429 7.21794C8.43342 7.60846 9.06659 7.60846 9.45711 7.21794L14.925 1.75C15.1529 1.5222 15.5222 1.5222 15.75 1.75V1.75C15.9778 1.97781 15.9778 2.34716 15.75 2.57496L10.2821 8.0429C9.89154 8.43342 9.89154 9.06659 10.2821 9.45711L15.75 14.925C15.9778 15.1529 15.9778 15.5222 15.75 15.75V15.75C15.5222 15.9778 15.1529 15.9778 14.925 15.75L9.45711 10.2821C9.06659 9.89154 8.43342 9.89154 8.0429 10.2821L2.57496 15.75C2.34716 15.9778 1.97781 15.9778 1.75 15.75V15.75C1.5222 15.5222 1.5222 15.1529 1.75 14.925L7.21794 9.45711Z" fill="white" stroke="white" stroke-width="1.5"/>
           </svg>
         </div>
       </div>
@@ -165,6 +189,13 @@ Venezuela <3
           gsap.to(this.navImage, {
             duration: 0.5,
             opacity: 1,
+            delay: 2,
+          });
+
+          gsap.to(this.infoIcon, {
+            opacity: 1,
+            duration: 1,
+            delay: 2,
           });
         },
       });

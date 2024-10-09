@@ -51,11 +51,11 @@ export default class Camera {
     this.controls.enableDamping = true;
     //? controls limitations
 
-    // this.controls.minDistance = 1;
-    // this.controls.maxDistance = 15;
+    this.controls.minDistance = 0;
+    this.controls.maxDistance = 10;
 
-    // this.controls.minPolarAngle = -Math.PI * 0.1; // radians
-    // this.controls.maxPolarAngle = Math.PI / 2; // radians
+    this.controls.minPolarAngle = -Math.PI * 0.1; // radians
+    this.controls.maxPolarAngle = Math.PI / 2; // radians
 
     // this.controls.minAzimuthAngle = -0.1;
     // this.controls.maxAzimuthAngle = Math.PI * 0.55;

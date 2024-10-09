@@ -1,18 +1,5 @@
 export default [
   {
-    name: "environmentTexture",
-    type: "cubeTextureLoader",
-    path: [
-      "/textures/envTexture3/px.png",
-      "/textures/envTexture3/nx.png",
-      "/textures/envTexture3/py.png",
-      "/textures/envTexture3/ny.png",
-      "/textures/envTexture3/pz.png",
-      "/textures/envTexture3/nz.png",
-    ],
-  },
-
-  {
     name: "room",
     type: "gltfLoader",
     path: "/models/room.glb",
@@ -52,90 +39,96 @@ export default [
     path: "/textures/magazine_textures.webp",
   },
 
+  {
+    name: "boardTexture",
+    type: "textureLoader",
+    path: "/textures/board.webp",
+  },
+
   //? monitor textures
 
   {
     name: "homeTexture",
     type: "textureLoader",
-    path: "/textures/screen_first_1.jpg",
+    path: "/textures/screen_first_1.webp",
   },
 
   {
     name: "aboutMeTexture",
     type: "textureLoader",
-    path: "/textures/aboutMe.jpg",
+    path: "/textures/aboutMe.webp",
   },
 
   {
     name: "projectsTexture",
     type: "textureLoader",
-    path: "/textures/projects_texture_btn.jpg",
+    path: "/textures/projects_texture_btn.webp",
   },
 
   {
     name: "cvTexture",
     type: "textureLoader",
-    path: "/textures/cv_texture.jpg",
+    path: "/textures/cv_texture.webp",
   },
 
   {
     name: "project_1",
     type: "textureLoader",
-    path: "/textures/project_1.jpg",
+    path: "/textures/project_1.webp",
   },
 
   {
     name: "project_2",
     type: "textureLoader",
-    path: "/textures/project_2.jpg",
+    path: "/textures/project_2.webp",
   },
 
   {
     name: "project_3",
     type: "textureLoader",
-    path: "/textures/project_3.jpg",
+    path: "/textures/project_3.webp",
   },
 
   {
     name: "project_4",
     type: "textureLoader",
-    path: "/textures/project_4.jpg",
+    path: "/textures/project_4.webp",
   },
 
   {
     name: "project_5",
     type: "textureLoader",
-    path: "/textures/project_5.jpg",
+    path: "/textures/project_5.webp",
   },
 
   //? projector textures
   {
     name: "project_1_projector",
     type: "textureLoader",
-    path: "/textures/project_1_projector.jpg",
+    path: "/textures/project_1_projector.webp",
   },
 
   {
     name: "project_2_projector",
     type: "textureLoader",
-    path: "/textures/project_2_projector.jpg",
+    path: "/textures/project_2_projector.webp",
   },
 
   {
     name: "project_3_projector",
     type: "textureLoader",
-    path: "/textures/project_3_projector.jpg",
+    path: "/textures/project_3_projector.webp",
   },
 
   {
     name: "project_4_projector",
     type: "textureLoader",
-    path: "/textures/project_4_projector.jpg",
+    path: "/textures/project_4_projector.webp",
   },
 
   {
     name: "project_5_projector",
     type: "textureLoader",
-    path: "/textures/project_5_projector.jpg",
+    path: "/textures/project_5_projector.webp",
   },
 ];

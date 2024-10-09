@@ -3,6 +3,8 @@ import Experience from "./Experience";
 import { Reflector } from "three/addons/objects/Reflector.js";
 import rayFragment from "/shaders/rayGod/rayFragment.glsl";
 import rayVertex from "/shaders/rayGod/rayVertex.glsl";
+import firefliesVertexShader from "/shaders/fireflies/firefliesVertexShader.glsl";
+import firefliesFragmentShader from "/shaders/fireflies/firefliesFragmentShader.glsl";
 
 import FakeGlowMaterial from "./FakeGlowMaterial.js";
 
@@ -10,9 +12,6 @@ import gsap from "gsap";
 
 export default class World {
   constructor() {
-    // console.log(rayFragment);
-    console.log(rayVertex);
-
     this.experience = new Experience();
 
     this.debug = this.experience.debug;
@@ -35,8 +34,6 @@ export default class World {
       depthTest: true,
     });
 
-    console.log(this.fakeGlowMaterial);
-
     this.group = new THREE.Group();
 
     //? html
@@ -50,18 +47,26 @@ export default class World {
     this.cvBtn = null;
     this.creditsBtn = null;
     this.moreInforamtionBtn = null;
+    this.laptop = null;
+    this.laptopScreen = null;
+    this.projectorScreen = null;
 
     //? projects btn
     this.projectBtns = [];
     this.projectorHomeBtn = null;
     this.projectorCreditsBtn = null;
 
+    //? outline
+
+    this.outline = null;
     //? raycaster
 
     // this.screenActive = false;
+    this.monitorOn = false;
     this.informationOpen = false;
     this.creditsOpen = false;
     this.projectOpen = false;
+    this.homeOpen = false;
     this.currentProject = 1;
 
     this.rayCaster = new THREE.Raycaster();
@@ -96,8 +101,6 @@ export default class World {
         } else {
           this.debugSettings.objectActive = true;
         }
-
-        console.log(this.objectActive);
       },
     };
 
@@ -106,11 +109,6 @@ export default class World {
 
   setUpScene() {
     this.resources.on("resourcesReady", () => {
-      this.environmentTexture = this.resources.items.environmentTexture;
-      this.environmentTexture.SRGBColorSpace = THREE.SRGBColorSpace;
-      this.scene.environment = this.environmentTexture;
-      // this.scene.background = this.environmentTexture;
-
       this.room = this.resources.items.room;
 
       //? baked Textures
@@ -118,10 +116,6 @@ export default class World {
       this.floorBaked = this.resources.items.floorBaked;
       this.floorBaked.colorSpace = THREE.SRGBColorSpace;
       this.floorBaked.flipY = false;
-
-      this.firstBakedMaterial = new THREE.MeshBasicMaterial({
-        map: this.firstBakedTexture,
-      });
 
       this.firstBakedTexture = this.resources.items.firstBakedTexture;
       this.firstBakedTexture.colorSpace = THREE.SRGBColorSpace;
@@ -153,6 +147,14 @@ export default class World {
 
       this.magazinesMaterial = new THREE.MeshBasicMaterial({
         map: this.magazinesTextures,
+      });
+
+      this.boardTexture = this.resources.items.boardTexture;
+      this.boardTexture.colorSpace = THREE.SRGBColorSpace;
+      this.boardTexture.flipY = false;
+
+      this.boardMaterial = new THREE.MeshBasicMaterial({
+        map: this.boardTexture,
       });
 
       //?monitor textures
@@ -235,9 +237,11 @@ export default class World {
         map: this.projectsTexture,
       });
 
-      this.dummyMaterial = new THREE.MeshBasicMaterial({ color: "black" });
+      this.dummyMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
 
-      this.video = this.setUpLoadingScreen("/textures/video.mp4");
+      this.video_1 = this.setUpLoadingScreen("/textures/projector_video.mp4");
+
+      this.video_2 = this.setUpLoadingScreen("/textures/monitor_video.mp4");
 
       this.room.scene.traverse((child) => {
         if (child.name.startsWith("first_baked")) {
@@ -252,28 +256,40 @@ export default class World {
           child.material = this.wallsBakedMaterial;
         }
 
+        if (child.name.startsWith("board")) {
+          child.material = this.boardMaterial;
+        }
+
         if (child.name.startsWith("floor")) {
-          console.log(child);
           child.material = new THREE.MeshBasicMaterial({
             map: this.floorBaked,
           });
         }
 
         if (child.name.startsWith("magazine")) {
-          console.log(child);
           child.material = this.magazinesMaterial;
         }
 
+        //? outline
+
+        if (child.name.startsWith("outline")) {
+          child.material = new THREE.MeshBasicMaterial({
+            color: "#ffffff",
+            transparent: true,
+            opacity: 0.3,
+          });
+
+          this.outline = child;
+        }
         //? animated
         if (child.name === "screen") {
           child.material = this.screenMaterial;
-          console.log(child.position);
+
+          this.laptopScreen = child;
           this.intersectObjects.push(child);
         }
 
         if (child.name === "ray") {
-          // child.material = this.fakeGodRays(child, this.camera);
-          // child.needsUpdate = true;
           child.material = this.fakeGlowMaterial;
         }
 
@@ -281,21 +297,22 @@ export default class World {
 
         if (child.name.startsWith("laptop")) {
           child.material = this.secondBakedMaterial;
+          this.laptop = child;
           this.intersectObjects.push(child);
         }
 
-        if (child.name.startsWith("project")) {
-          // child.material = this.projectMaterial;
-          child.material = this.video;
-          this.controls.target.set(
-            child.position.x,
-            child.position.y,
-            child.position.z
-          );
+        if (child.name === "second_screen") {
+          if (!this.mobileSize) {
+            child.material = this.video_2;
+          }
         }
 
-        //?
+        if (child.name.startsWith("project_screen")) {
+          child.material = this.dummyMaterial;
+          this.projectorScreen = child;
+        }
 
+        //? BUTTONS
         if (child.name.startsWith("btn")) {
           child.material = this.btnMaterial;
         }
@@ -306,24 +323,19 @@ export default class World {
         if (child.name === "btn_about") {
           child.material = this.screenMaterial;
           this.aboutBtn = child;
-          console.log(child.scale.x);
-          // this.intersectObjects.push(child);
         }
         if (child.name === "btn_projects") {
           child.material = this.screenMaterial;
-
           this.projectsBtn = child;
-          // this.intersectObjects.push(child);
         }
+
         if (child.name === "btn_cv") {
           child.material = this.screenMaterial;
 
           this.cvBtn = child;
-          // this.intersectObjects.push(child);
         }
         if (child.name === "btn_credits") {
           this.creditsBtn = child;
-          // this.intersectObjects.push(child);
         }
 
         if (child.name === "btn_more_information") {
@@ -333,7 +345,6 @@ export default class World {
         if (child.name.startsWith("project_btn")) {
           this.projectBtns.push(child);
           child.material = this.btnMaterial;
-          // child.material = new THREE.MeshBasicMaterial({ color: "red" });
         }
         //? projector buttons
         if (child.name === "btn_home_projector") {
@@ -345,9 +356,6 @@ export default class World {
         }
 
         if (child.isGroup) {
-          // child.material = this.dummyMaterial;
-          console.log(child);
-          // console.log(this.group);
           this.group.add(child);
         }
 
@@ -364,23 +372,15 @@ export default class World {
             textureHeight: this.size.height * this.size.pixelRatio,
             color: 0xb5b5b5,
           });
-
-          // this.mirror.position.set(
-          //   child.position.x,
-          //   child.position.y,
-          //   child.position.z
-          // );
-
           this.mirror.position.set(-0.667233, 0.652447, -1.19418);
-
-          console.log(child.position.x, child.position.y, child.position.z);
-
           this.mirror.rotation.x = -0.22;
-
           this.group.add(this.mirror);
         }
       });
 
+      if (!this.mobileSize) {
+        this.setUpFireflies();
+      }
       // ? website animation
       this.group.scale.set(0, 0, 0);
       gsap.to(this.group.scale, {
@@ -394,8 +394,20 @@ export default class World {
           gsap.to(this.fakeGlowMaterial.uniforms.opacity, {
             value: 0.21,
             duration: 2,
-            ease: "back.out(10)",
+            ease: "back.out(2.5)",
+            onComplete: () => {},
           });
+
+          this.projectorScreen.material = this.video_1;
+
+          if (this.fireflies) {
+            gsap.to(this.firefliesMaterial.uniforms.opacity, {
+              value: 1,
+              duration: 3,
+              delay: 1.5,
+              ease: "back.out(2)",
+            });
+          }
         },
       });
 
@@ -406,18 +418,11 @@ export default class World {
         ease: "back.out(2)",
       });
 
-      // "back.out(1)";
-
       this.scene.add(this.group);
-      // this.scene.add(this.mirror);
 
       //? default camera position
       this.camera.position.set(-3.43, 1.73, 4.728);
       this.controls.target.set(0.375967, 0.913637, -1.16198);
-
-      // //? monitor try
-      // this.camera.position.set(0.1874, 0.9914, -0.931);
-      // this.controls.target.set(0.188, 0.913637, -1.306);
 
       this.informationButton.addEventListener("click", () => {
         this.infoMainContainer.style.display = "flex";
@@ -426,7 +431,6 @@ export default class World {
       });
 
       this.infoMainContainer.addEventListener("click", (e) => {
-        console.log(e.target.className);
         if (e.target.className === "close-btn") {
           this.infoMainContainer.style.display = "none";
           document.querySelector(".credits").style.display = "none";
@@ -438,6 +442,54 @@ export default class World {
 
       this.debugActive();
     });
+  }
+
+  setUpFireflies() {
+    this.firefliesGeometry = new THREE.BufferGeometry();
+    this.firefliesCount = 250;
+    this.positionArray = new Float32Array(this.firefliesCount * 3);
+    this.scaleArray = new Float32Array(this.firefliesCount * 1);
+
+    for (let i = 0; i < this.firefliesCount; i++) {
+      this.positionArray[i * 3 + 0] = 25 * Math.random() - 12.5;
+      this.positionArray[i * 3 + 1] = 10 * Math.random();
+      this.positionArray[i * 3 + 2] = -25 * Math.random() + 5;
+
+      this.scaleArray[i] = Math.random();
+    }
+
+    this.firefliesGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(this.positionArray, 3)
+    );
+
+    this.firefliesGeometry.setAttribute(
+      "aScale",
+      new THREE.BufferAttribute(this.positionArray, 3)
+    );
+
+    this.firefliesMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
+        uSize: { value: 12.5 },
+        opacity: { value: 0.0 },
+      },
+
+      blending: THREE.AdditiveBlending,
+      transparent: true,
+      depthWrite: false,
+      vertexShader: firefliesVertexShader,
+      fragmentShader: firefliesFragmentShader,
+    });
+
+    this.fireflies = new THREE.Points(
+      this.firefliesGeometry,
+      this.firefliesMaterial
+    );
+
+    this.fireflies.position.set(0, -1, 0);
+    this.scene.add(this.fireflies);
   }
 
   setUpLoadingScreen(video) {
@@ -524,9 +576,6 @@ export default class World {
       shader.fragmentShader = rayFragment;
       changedMaterial.userData.shader = shader;
     };
-
-    console.log(changedMaterial);
-
     objectToBeChanged.material = changedMaterial;
     objectToBeChanged.needsUpdate = true;
   }
@@ -610,6 +659,18 @@ export default class World {
   }
 
   update() {
+    if (this.fireflies) {
+      this.fireflies.material.uniforms.uTime.value = this.time.elapsed * 0.0002;
+    }
+
+    if (!this.monitorOn) {
+      if (this.mobileSize) {
+        if (this.outline) {
+          this.outline.material.opacity =
+            (0.7 + Math.sin(this.time.elapsed / 250)) / 1.5;
+        }
+      }
+    }
     if (this.rayCaster) {
       this.rayCaster.setFromCamera(this.pointer, this.camera);
       this.intersects = this.rayCaster.intersectObjects(this.intersectObjects);
@@ -619,20 +680,26 @@ export default class World {
           if (!this.currentIntersect) {
           }
 
+          if (!this.monitorOn) {
+            if (!this.mobileSize) {
+              if (this.outline) {
+                this.outline.material.opacity =
+                  (0.7 + Math.sin(this.time.elapsed / 250)) / 1.5;
+              }
+            }
+          }
           this.currentIntersect = this.intersects[0];
 
           if (
             this.currentIntersect.object.name === "screen" ||
             this.currentIntersect.object.name === "laptop"
           ) {
-            console.log(this.currentIntersect.object.name);
             if (this.clicked) {
-              gsap.to(this.fakeGlowMaterial.uniforms.opacity, {
-                value: 0.17,
+              gsap.to(this.outline.material, {
+                opacity: 0,
                 duration: 1,
-                delay: 0.5,
-                ease: "ease-out",
               });
+              this.monitorOn = true;
               this.monitorAmination();
 
               this.intersectObjects = [];
@@ -640,7 +707,8 @@ export default class World {
                 this.aboutBtn,
                 this.creditsBtn,
                 this.projectsBtn,
-                this.cvBtn
+                this.cvBtn,
+                this.homeBtn
               );
             }
           }
@@ -670,7 +738,7 @@ export default class World {
                 this.intersectObjects.push(this.homeBtn, this.creditsBtn);
                 this.homeBtn.material = this.btnMaterial;
 
-                console.log(this.intersectObjects);
+                this.homeOpen = true;
               }
             }
           }
@@ -696,7 +764,7 @@ export default class World {
                 this.intersectObjects.push(this.homeBtn, this.creditsBtn);
                 this.creditsOpen = false;
                 this.projectOpen = false;
-              } else {
+              } else if (this.homeOpen) {
                 this.screenMaterial.map = this.homeTexture;
                 this.aboutBtn.material = this.screenMaterial;
                 this.projectsBtn.material = this.screenMaterial;
@@ -707,7 +775,8 @@ export default class World {
                   this.creditsBtn,
                   this.aboutBtn,
                   this.projectsBtn,
-                  this.cvBtn
+                  this.cvBtn,
+                  this.homeBtn
                 );
 
                 this.projectBtns.forEach((e) => {
@@ -718,6 +787,29 @@ export default class World {
                 document.querySelector(".credits").style.display = "none";
                 document.querySelector(".info").style.display = "none";
                 this.creditsOpen = false;
+                this.homeOpen = false;
+              } else {
+                gsap.to(this.controls.target, {
+                  x: 0.375,
+                  y: 0.913637,
+                  z: -1.161,
+                  duration: 2.5,
+                  ease: "power2.out",
+                });
+
+                gsap.to(this.camera.position, {
+                  x: -3.43,
+                  y: 1.73,
+                  z: 4.72,
+                  duration: 2.5,
+                  ease: "power2.out",
+                });
+
+                this.monitorOn = false;
+
+                this.intersectObjects = [];
+                this.intersectObjects.push(this.laptop, this.laptopScreen);
+                this.projectorScreen.material = this.video_1;
               }
             }
           }
@@ -739,6 +831,7 @@ export default class World {
 
                 this.intersectObjects = this.projectBtns;
                 this.intersectObjects.push(this.homeBtn, this.creditsBtn);
+                this.homeOpen = true;
               }
             }
           }
@@ -748,6 +841,7 @@ export default class World {
               this.infoMainContainer.style.display = "flex";
               document.querySelector(".credits").style.display = "flex";
               this.creditsOpen = true;
+              this.homeOpen = true;
             }
           }
 
@@ -760,6 +854,7 @@ export default class World {
                 this.cvBtn.material = this.btnMaterial;
                 this.intersectObjects = [];
                 this.intersectObjects.push(this.homeBtn, this.creditsBtn);
+                this.homeOpen = true;
               }
             }
           }
@@ -777,6 +872,7 @@ export default class World {
                 this.projectBtns.forEach((e) => {
                   e.material = this.btnMaterial;
                 });
+
                 this.projectOpen = true;
                 this.currentProject = 1;
               }
@@ -797,6 +893,7 @@ export default class World {
                 this.projectBtns.forEach((e) => {
                   e.material = this.btnMaterial;
                 });
+
                 this.projectOpen = true;
                 this.currentProject = 2;
               }
@@ -817,6 +914,7 @@ export default class World {
                 this.projectBtns.forEach((e) => {
                   e.material = this.btnMaterial;
                 });
+
                 this.projectOpen = true;
                 this.currentProject = 3;
               }
@@ -837,6 +935,7 @@ export default class World {
                 this.projectBtns.forEach((e) => {
                   e.material = this.btnMaterial;
                 });
+
                 this.projectOpen = true;
                 this.currentProject = 4;
               }
@@ -858,6 +957,7 @@ export default class World {
                 this.projectBtns.forEach((e) => {
                   e.material = this.btnMaterial;
                 });
+
                 this.projectOpen = true;
                 this.currentProject = 5;
               }
@@ -866,6 +966,7 @@ export default class World {
 
           if (this.currentIntersect.object.name === "btn_more_information") {
             if (this.clicked) {
+              this.projectorScreen.material = this.projectMaterial;
               if (this.currentProject === 1) {
                 this.projectMaterial.map = this.project_1_projector;
               } else if (this.currentProject === 2) {
@@ -940,6 +1041,16 @@ export default class World {
           }
         }
         document.body.style.cursor = "auto";
+        if (!this.currentIntersect) {
+          if (this.outline) {
+            if (!this.mobileSize) {
+              gsap.to(this.outline.material, {
+                opacity: 0,
+                duration: 1,
+              });
+            }
+          }
+        }
       }
     }
 
