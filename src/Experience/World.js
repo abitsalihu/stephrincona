@@ -39,6 +39,7 @@ export default class World {
     //? html
     this.informationButton = this.html.infoIcon;
     this.infoMainContainer = this.html.infoMainContainer;
+    this.emailButton = this.html.emailButton;
 
     //? 3d buttons
     this.homeBtn = null;
@@ -50,7 +51,7 @@ export default class World {
     this.laptop = null;
     this.laptopScreen = null;
     this.projectorScreen = null;
-
+    this.emailObjectButton = null;
     //? projects btn
     this.projectBtns = [];
     this.projectorHomeBtn = null;
@@ -334,6 +335,10 @@ export default class World {
 
           this.cvBtn = child;
         }
+
+        if (child.name === "btn_email") {
+          this.emailObjectButton = child;
+        }
         if (child.name === "btn_credits") {
           this.creditsBtn = child;
         }
@@ -362,8 +367,7 @@ export default class World {
         //? mirror
 
         if (child.name === "mirror") {
-          child.material = this.btnMaterial;
-          child.material.dispose();
+          child.material = this.dummyMaterial;
 
           this.mirrorGeometry = child.geometry;
           this.mirror = new Reflector(this.mirrorGeometry, {
@@ -374,7 +378,12 @@ export default class World {
           });
           this.mirror.position.set(-0.667233, 0.652447, -1.19418);
           this.mirror.rotation.x = -0.22;
-          this.group.add(this.mirror);
+
+          if (!this.mobileSize) {
+            child.material = this.btnMaterial;
+            child.material.dispose();
+            this.group.add(this.mirror);
+          }
         }
       });
 
@@ -528,12 +537,22 @@ export default class World {
   }
 
   monitorAmination() {
+    this.controls.minAzimuthAngle = Infinity;
+    this.controls.maxAzimuthAngle = Infinity;
     gsap.to(this.controls.target, {
       x: 0.188471,
       y: 0.913637,
       z: -1.30683,
       duration: 2,
       ease: "power2.out",
+
+      onComplete: () => {
+        this.controls.minDistance = 0;
+        this.controls.maxDistance = 3;
+
+        this.controls.minAzimuthAngle = -0.5;
+        this.controls.maxAzimuthAngle = 0.5;
+      },
     });
 
     if (this.mobileSize) {
@@ -581,8 +600,11 @@ export default class World {
   }
 
   projectorAnimation() {
+    this.controls.minAzimuthAngle = Infinity;
+    this.controls.maxAzimuthAngle = Infinity;
     this.projectorHomeBtn.material = this.btnMaterial;
     this.projectorCreditsBtn.material = this.btnMaterial;
+
     gsap.to(this.controls.target, {
       x: 1.64691,
       y: 1.53646,
@@ -590,9 +612,16 @@ export default class World {
 
       duration: 4,
       ease: "power2.out",
+
+      onComplete: () => {
+        this.controls.minAzimuthAngle = -2;
+        this.controls.maxAzimuthAngle = -0.5;
+      },
     });
 
     if (this.mobileSize) {
+      this.controls.minDistance = 0;
+      this.controls.maxDistance = 6;
       gsap.to(this.camera.position, {
         x: -3.942,
         y: 1.46963,
@@ -607,6 +636,8 @@ export default class World {
         },
       });
     } else {
+      this.controls.minDistance = 0;
+      this.controls.maxDistance = 2;
       gsap.to(this.camera.position, {
         x: -0.1566,
         y: 1.48038,
@@ -789,6 +820,11 @@ export default class World {
                 this.creditsOpen = false;
                 this.homeOpen = false;
               } else {
+                this.controls.minDistance = 0;
+                this.controls.maxDistance = 10;
+
+                this.controls.minAzimuthAngle = Infinity;
+                this.controls.maxAzimuthAngle = Infinity;
                 gsap.to(this.controls.target, {
                   x: 0.375,
                   y: 0.913637,
@@ -853,8 +889,20 @@ export default class World {
                 this.projectsBtn.material = this.btnMaterial;
                 this.cvBtn.material = this.btnMaterial;
                 this.intersectObjects = [];
-                this.intersectObjects.push(this.homeBtn, this.creditsBtn);
+                this.intersectObjects.push(
+                  this.homeBtn,
+                  this.creditsBtn,
+                  this.emailObjectButton
+                );
                 this.homeOpen = true;
+              }
+            }
+          }
+
+          if (this.currentIntersect.object.name === "btn_email") {
+            if (this.clicked) {
+              if (!this.creditsOpen) {
+                this.emailButton.click();
               }
             }
           }
@@ -966,6 +1014,11 @@ export default class World {
 
           if (this.currentIntersect.object.name === "btn_more_information") {
             if (this.clicked) {
+              this.intersectObjects = [];
+              this.intersectObjects.push(
+                this.projectorHomeBtn,
+                this.projectorCreditsBtn
+              );
               this.projectorScreen.material = this.projectMaterial;
               if (this.currentProject === 1) {
                 this.projectMaterial.map = this.project_1_projector;
@@ -993,6 +1046,8 @@ export default class World {
               document.querySelector(".credits").style.display = "none";
               document.querySelector(".info").style.display = "none";
               this.creditsOpen = false;
+              this.intersectObjects = [];
+              this.intersectObjects.push(this.homeBtn, this.moreInforamtionBtn);
             }
           }
 

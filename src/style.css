@@ -250,6 +250,15 @@ h3 {
   width: 100px;
 }
 
+/* //? EMAIL */
+
+.email-btn {
+  position: fixed;
+  top: 40px;
+  right: 40px;
+  z-index: 10;
+}
+
 @media screen and (min-width: 768px) {
   .info-inner-con {
     width: 400px;

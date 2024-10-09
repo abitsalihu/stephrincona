@@ -175,6 +175,13 @@ export default class HTML {
 
     this.body.append(this.infoMainContainer);
 
+    //? email btn
+
+    this.emailButton = document.createElement("a");
+    this.emailButton.href = "mailto:stephanyrincona@gmail.com";
+
+    this.body.append(this.emailButton);
+
     //! end HTML
 
     this.resources.on("resourcesReady", () => {
