@@ -382,7 +382,7 @@ export default class World {
           if (!this.mobileSize) {
             child.material = this.btnMaterial;
             child.material.dispose();
-            this.group.add(this.mirror);
+            // this.group.add(this.mirror);
           }
         }
       });
@@ -537,6 +537,8 @@ export default class World {
   }
 
   monitorAmination() {
+    this.controls.minDistance = 0;
+    this.controls.maxDistance = 20;
     this.controls.minAzimuthAngle = Infinity;
     this.controls.maxAzimuthAngle = Infinity;
     gsap.to(this.controls.target, {
@@ -548,10 +550,54 @@ export default class World {
 
       onComplete: () => {
         this.controls.minDistance = 0;
-        this.controls.maxDistance = 3;
+        this.controls.maxDistance = 1.25;
 
         this.controls.minAzimuthAngle = -0.5;
         this.controls.maxAzimuthAngle = 0.5;
+      },
+    });
+
+    if (this.mobileSize) {
+      gsap.to(this.camera.position, {
+        x: 0.185,
+        y: 1.1411,
+        z: -0.207,
+        duration: 2,
+        ease: "power2.out",
+      });
+    } else {
+      gsap.to(this.camera.position, {
+        x: 0.1874,
+        y: 0.9914,
+        z: -0.931,
+        duration: 2,
+        ease: "power2.out",
+      });
+    }
+  }
+
+  screenToMonitorAnimation() {
+    this.controls.minDistance = 0;
+    this.controls.maxDistance = 20;
+    this.controls.minAzimuthAngle = Infinity;
+    this.controls.maxAzimuthAngle = Infinity;
+
+    this.intersectObjects = [];
+    gsap.to(this.controls.target, {
+      x: 0.188471,
+      y: 0.913637,
+      z: -1.30683,
+      duration: 2,
+      ease: "power2.out",
+
+      onComplete: () => {
+        this.controls.minDistance = 0;
+        this.controls.maxDistance = 1.25;
+
+        this.controls.minAzimuthAngle = -0.5;
+        this.controls.maxAzimuthAngle = 0.5;
+
+        this.intersectObjects.push(this.homeBtn, this.moreInforamtionBtn);
       },
     });
 
@@ -600,10 +646,13 @@ export default class World {
   }
 
   projectorAnimation() {
+    this.controls.minDistance = 0;
+    this.controls.maxDistance = Infinity;
     this.controls.minAzimuthAngle = Infinity;
     this.controls.maxAzimuthAngle = Infinity;
     this.projectorHomeBtn.material = this.btnMaterial;
     this.projectorCreditsBtn.material = this.btnMaterial;
+    this.intersectObjects = [];
 
     gsap.to(this.controls.target, {
       x: 1.64691,
@@ -616,24 +665,23 @@ export default class World {
       onComplete: () => {
         this.controls.minAzimuthAngle = -2;
         this.controls.maxAzimuthAngle = -0.5;
+
+        this.intersectObjects.push(
+          this.projectorHomeBtn,
+          this.projectorCreditsBtn
+        );
       },
     });
 
     if (this.mobileSize) {
       this.controls.minDistance = 0;
-      this.controls.maxDistance = 6;
+      this.controls.maxDistance = 5;
       gsap.to(this.camera.position, {
         x: -3.942,
         y: 1.46963,
         z: 0.0803,
         duration: 3,
         ease: "power2.out",
-        onComplete: () => {
-          this.intersectObjects.push(
-            this.projectorHomeBtn,
-            this.projectorCreditsBtn
-          );
-        },
       });
     } else {
       this.controls.minDistance = 0;
@@ -644,12 +692,6 @@ export default class World {
         z: 0.281,
         duration: 3,
         ease: "power2.out",
-        onComplete: () => {
-          this.intersectObjects.push(
-            this.projectorHomeBtn,
-            this.projectorCreditsBtn
-          );
-        },
       });
     }
 
@@ -1014,11 +1056,6 @@ export default class World {
 
           if (this.currentIntersect.object.name === "btn_more_information") {
             if (this.clicked) {
-              this.intersectObjects = [];
-              this.intersectObjects.push(
-                this.projectorHomeBtn,
-                this.projectorCreditsBtn
-              );
               this.projectorScreen.material = this.projectMaterial;
               if (this.currentProject === 1) {
                 this.projectMaterial.map = this.project_1_projector;
@@ -1041,13 +1078,11 @@ export default class World {
             document.body.style.cursor = "pointer";
 
             if (this.clicked) {
-              this.monitorAmination();
+              this.screenToMonitorAnimation();
               this.infoMainContainer.style.display = "none";
               document.querySelector(".credits").style.display = "none";
               document.querySelector(".info").style.display = "none";
               this.creditsOpen = false;
-              this.intersectObjects = [];
-              this.intersectObjects.push(this.homeBtn, this.moreInforamtionBtn);
             }
           }
 
