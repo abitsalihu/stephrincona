@@ -382,7 +382,7 @@ export default class World {
           if (!this.mobileSize) {
             child.material = this.btnMaterial;
             child.material.dispose();
-            // this.group.add(this.mirror);
+            this.group.add(this.mirror);
           }
         }
       });
