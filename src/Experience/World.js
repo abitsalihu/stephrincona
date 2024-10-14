@@ -55,7 +55,6 @@ export default class World {
     //? projects btn
     this.projectBtns = [];
     this.projectorHomeBtn = null;
-    this.projectorCreditsBtn = null;
 
     //? outline
 
@@ -275,7 +274,7 @@ export default class World {
 
         if (child.name.startsWith("outline")) {
           child.material = new THREE.MeshBasicMaterial({
-            color: "#ffffff",
+            color: 0x08c2ff,
             transparent: true,
             opacity: 0.3,
           });
@@ -356,10 +355,6 @@ export default class World {
           this.projectorHomeBtn = child;
         }
 
-        if (child.name === "btn_credits_projector") {
-          this.projectorCreditsBtn = child;
-        }
-
         if (child.isGroup) {
           this.group.add(child);
         }
@@ -387,9 +382,9 @@ export default class World {
         }
       });
 
-      if (!this.mobileSize) {
-        this.setUpFireflies();
-      }
+      // if (!this.mobileSize) {
+      this.setUpFireflies();
+      // }
       // ? website animation
       this.group.scale.set(0, 0, 0);
       gsap.to(this.group.scale, {
@@ -651,7 +646,7 @@ export default class World {
     this.controls.minAzimuthAngle = Infinity;
     this.controls.maxAzimuthAngle = Infinity;
     this.projectorHomeBtn.material = this.btnMaterial;
-    this.projectorCreditsBtn.material = this.btnMaterial;
+
     this.intersectObjects = [];
 
     gsap.to(this.controls.target, {
@@ -666,16 +661,13 @@ export default class World {
         this.controls.minAzimuthAngle = -2;
         this.controls.maxAzimuthAngle = -0.5;
 
-        this.intersectObjects.push(
-          this.projectorHomeBtn,
-          this.projectorCreditsBtn
-        );
+        this.intersectObjects.push(this.projectorHomeBtn);
       },
     });
 
     if (this.mobileSize) {
       this.controls.minDistance = 0;
-      this.controls.maxDistance = 5;
+      this.controls.maxDistance = 7;
       gsap.to(this.camera.position, {
         x: -3.942,
         y: 1.46963,
@@ -685,7 +677,7 @@ export default class World {
       });
     } else {
       this.controls.minDistance = 0;
-      this.controls.maxDistance = 2;
+      this.controls.maxDistance = 3;
       gsap.to(this.camera.position, {
         x: -0.1566,
         y: 1.48038,
@@ -1083,15 +1075,6 @@ export default class World {
               document.querySelector(".credits").style.display = "none";
               document.querySelector(".info").style.display = "none";
               this.creditsOpen = false;
-            }
-          }
-
-          //? projector buttons
-          if (this.currentIntersect.object.name === "btn_credits_projector") {
-            if (this.clicked) {
-              this.infoMainContainer.style.display = "flex";
-              document.querySelector(".credits").style.display = "flex";
-              this.creditsOpen = true;
             }
           }
         }

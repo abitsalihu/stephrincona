@@ -62,7 +62,7 @@ export default class HTML {
     this.infoIcon = document.createElement("div");
 
     this.infoIcon.innerHTML = `
-      <img src="/textures/info-icon1.png"/>
+      <img src="/textures/inf-icon.png"/>
      `;
 
     this.infoIcon.classList.add("info-icon");
