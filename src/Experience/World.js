@@ -241,7 +241,7 @@ export default class World {
 
       this.video_1 = this.setUpLoadingScreen("/textures/projector_video.mp4");
 
-      this.video_2 = this.setUpLoadingScreen("/textures/monitor_video.mp4");
+      this.video_2 = this.setUpLoadingScreen("/textures/monitor_video-2.mp4");
 
       this.room.scene.traverse((child) => {
         if (child.name.startsWith("first_baked")) {
