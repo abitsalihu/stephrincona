@@ -128,7 +128,7 @@ export default class HTML {
             Special Thanks:
           </p>
           <p class="credits-name">
-            Venezuela💛💙❤️
+            Venezuela<3
           </p>
         </div>
 
