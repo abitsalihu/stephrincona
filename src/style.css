@@ -140,7 +140,7 @@ img {
   gap: 10px;
   font-size: 1.7rem;
   background: rgba(45, 45, 45, 0.7);
-  border-radius: 0px;
+  border-radius: 10px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(35.5px);
   -webkit-backdrop-filter: blur(35.5px);
