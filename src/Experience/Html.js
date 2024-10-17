@@ -156,16 +156,13 @@ export default class HTML {
         </p>
 
          <p>
-    Esta página web interactiva es más que un simple portafolio; es una representación visual y conceptual de mi hogar, en especial de mi sala, que es el corazón de mi espacio creativo. Aquí es donde han nacido y evolucionado todos los proyectos que estás por descubrir. He cuidado hasta el más mínimo detalle para que esta experiencia te transporte a mi mundo, para que no solo veas mi trabajo, sino también entiendas el entorno donde ocurre la magia del diseño.
+   Esta página web interactiva es más que un simple portafolio; es una representación visual y conceptual de mi hogar, en especial de mi sala, que es el corazón de mi espacio creativo. Aquí es donde han nacido y evolucionado todos los proyectos que estás por descubrir. He cuidado hasta el más mínimo detalle para que esta experiencia te transporte a mi mundo, para que no solo veas mi trabajo, sino también entiendas el entorno donde ocurre la magia del diseño.
         </p>
 
          <p>
-    He querido hacer de esta página una puerta abierta a mi proceso creativo, donde puedas explorar, de manera interactiva, cómo y dónde surgen las ideas, desde el concepto inicial hasta la ejecución final. Es una invitación a adentrarte en mi vida creativa, a sentir de cerca el ambiente en el que vivo y trabajo, y a experimentar de primera mano "dónde nacen los proyectos".
-        </p>
-
-        <p>
     Espero que disfrutes de esta experiencia interactiva tanto como yo disfruté creando cada uno de los proyectos que verás aquí. ¡Gracias por visitar mi espacio y bienvenido a mi mundo!
         </p>
+
       </div>
 
     </div>
